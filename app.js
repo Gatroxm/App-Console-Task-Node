@@ -38,6 +38,7 @@ const main = async() => {
                 tareas.crearTarea(desc);
                 break;
             case '2':
+                //Listado de tareas
                 console.log(tareas._listado)
                 break;
             case '3':

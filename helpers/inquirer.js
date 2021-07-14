@@ -91,8 +91,64 @@ const leeInput = async(message) => {
         return desc
     }
     // Module export
+
+const listarTareasBorrar = async(tareas = []) => {
+    const choices = tareas.map((tarea, i) => {
+        const idx = `${i+1}.`.green
+        return {
+            value: tarea.id,
+            name: `${idx} ${tarea.desc}`
+        }
+    });
+    choices.unshift({
+        value: '0',
+        name: `${'0.'.green} Cancelar`
+    });
+    const pregunstas = [{
+        type: 'list',
+        name: 'id',
+        message: '¿Que tarea desea Borrar?',
+        choices
+    }]
+    const { id } = await inquirer.prompt(pregunstas)
+    return id;
+}
+
+
+const confirmMessage = async(message) => {
+    const question = [{
+        type: 'confirm',
+        name: 'ok',
+        message
+    }];
+    const { ok } = await inquirer.prompt(question)
+    return ok;
+}
+
+const mostrarListadoTareasCheclist = async(tareas = []) => {
+    const choices = tareas.map((tarea, i) => {
+        const idx = `${i+1}.`.green
+        return {
+            value: tarea.id,
+            name: `${idx} ${tarea.desc}`,
+            checked: (tarea.completadoEn) ? true : false
+        }
+    });
+    const pregunsta = [{
+        type: 'checkbox',
+        name: 'ids',
+        message: 'seleccione',
+        choices
+    }]
+    const { ids } = await inquirer.prompt(pregunsta)
+    return ids;
+}
+
 module.exports = {
     inquirerMenu,
     pausa,
-    leeInput
+    leeInput,
+    listarTareasBorrar,
+    confirmMessage,
+    mostrarListadoTareasCheclist
 }

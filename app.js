@@ -1,11 +1,17 @@
 // Color library required
 require('colors');
-const { guardarDB, leerDB } = require('./helpers/guardarArchivo');
+const {
+    guardarDB,
+    leerDB
+} = require('./helpers/guardarArchivo');
 // importing the functions into the helpers folder
 const {
     inquirerMenu,
     pausa,
-    leeInput
+    leeInput,
+    listarTareasBorrar,
+    confirmMessage,
+    mostrarListadoTareasCheclist
 } = require('./helpers/inquirer');
 
 // The model tasks class is required
@@ -22,9 +28,8 @@ const main = async() => {
     const tareas = new Tareas();
     // instance function LeerDB()
     const tareasDB = leerDB();
-    await pausa();
     if (tareasDB) {
-        tareas._listado[tareasDB.id] = tareasDB;
+        tareas.cargarTareasArray(tareasDB)
     }
     // do while loop where the selected option is handled
     do {
@@ -39,20 +44,31 @@ const main = async() => {
                 break;
             case '2':
                 //Listado de tareas
-                console.log(tareas._listado)
+                tareas.listadoCompleto();
                 break;
-            case '3':
+            case '3': // function list completed
+                tareas.listadoCompletadasPendientes(true)
                 break;
-            case '4':
+            case '4': //Function list pending
+                tareas.listadoCompletadasPendientes(false)
                 break;
-            case '5':
+            case '5': // Function Check list tasck
+                const ids = await mostrarListadoTareasCheclist(tareas.ListadoArr);
+                tareas.toggleTasck(ids);
                 break;
             case '6':
+                const id = await listarTareasBorrar(tareas.ListadoArr);
+                if (id !== '0') {
+                    if (await confirmMessage('Desea eliminar la tarea?')) {
+                        tareas.borrarTareas(id);
+                        console.log('Tarea Borrada Correctamente');
+                    }
+                }
                 break;
         }
 
-        // guardarDB(tareas.ListadoArr)
-        // The console process is paused
+        guardarDB(tareas.ListadoArr)
+            // The console process is paused
         await pausa();
     } while (opt !== '0');
 }
